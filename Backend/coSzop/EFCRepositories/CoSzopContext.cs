@@ -10,6 +10,11 @@ public class CoSzopContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=app.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Electimore\\Desktop\\UniStuff\\Sem4\\ViaHACK2025\\coSzop\\Backend\\coSzop\\EFCRepositories\\app.db");
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<User>().HasIndex(u => u.Email).IsUnique();
     }
 }
