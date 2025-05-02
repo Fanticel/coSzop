@@ -1,0 +1,77 @@
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { createHashRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+import { paths } from './config/path';
+
+const convert = (queryClient: QueryClient) => (m: any) => {
+  const { clientLoader, clientAction, default: Component, ...rest } = m;
+  return {
+    ...rest,
+    loader: clientLoader?.(queryClient),
+    action: clientAction?.(queryClient),
+    Component,
+  };
+};
+
+export const createAppRouter = (queryClient: QueryClient) =>
+  createHashRouter([
+    {
+      path: paths.home.path,
+      lazy: () => import('./paths/landing').then(convert(queryClient)),
+    },
+    {
+      path: paths.register.path,
+      lazy: () => import('./paths/register').then(convert(queryClient)),
+  },
+  {
+      path: paths.login.path,
+      lazy: () => import('./paths/login').then(convert(queryClient)),
+  },
+    {
+      path: paths.app.root.path,
+      children: [
+        {
+            path: paths.app.requests.path,
+            lazy: () => import('./paths/app/requests').then(convert(queryClient)),
+        }
+        // {
+        //   path: paths.app.about.path,
+        //   lazy: () => import('./routes/app/about').then(convert(queryClient)),
+        // },
+        // {
+        //   path: paths.app.discussion.path,
+        //   lazy: () =>
+        //     import('./routes/app/discussions/discussion').then(
+        //       convert(queryClient),
+        //     ),
+        // },
+        // {
+        //   path: paths.app.users.path,
+        //   lazy: () => import('./routes/app/users').then(convert(queryClient)),
+        // },
+        // {
+        //   path: paths.app.profile.path,
+        //   lazy: () => import('./routes/app/profile').then(convert(queryClient)),
+        // },
+        // {
+        //   path: paths.app.dashboard.path,
+        //   lazy: () =>
+        //     import('./routes/app/dashboard').then(convert(queryClient)),
+        // },
+      ],
+    },
+    {
+      path: '*',
+      lazy: () => import('./paths/not-found').then(convert(queryClient)),
+    },
+  ]);
+
+export const AppRouter = () => {
+  const queryClient = useQueryClient();
+
+  const router = useMemo(() => createAppRouter(queryClient), [queryClient]);
+
+  return <RouterProvider router={router} />;
+};
