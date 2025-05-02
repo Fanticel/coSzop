@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webAPI", "webAPI\webAPI.csproj", "{E9ED8DCE-572E-45BB-A25B-6E21337D902A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{14E76599-71CC-40B1-827C-9EE2006B8F77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCRepositories", "EFCRepositories\EFCRepositories.csproj", "{A02985F9-D8DB-4A4B-84FF-99BFEE836579}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9ED8DCE-572E-45BB-A25B-6E21337D902A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9ED8DCE-572E-45BB-A25B-6E21337D902A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9ED8DCE-572E-45BB-A25B-6E21337D902A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9ED8DCE-572E-45BB-A25B-6E21337D902A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E76599-71CC-40B1-827C-9EE2006B8F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E76599-71CC-40B1-827C-9EE2006B8F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E76599-71CC-40B1-827C-9EE2006B8F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E76599-71CC-40B1-827C-9EE2006B8F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A02985F9-D8DB-4A4B-84FF-99BFEE836579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02985F9-D8DB-4A4B-84FF-99BFEE836579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A02985F9-D8DB-4A4B-84FF-99BFEE836579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A02985F9-D8DB-4A4B-84FF-99BFEE836579}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
