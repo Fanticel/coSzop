@@ -8,7 +8,7 @@ function myRequests(){
   const {user} = useContext(AuthContext)
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
   const navigate = useNavigate();
 
   interface Request {
