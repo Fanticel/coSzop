@@ -9,4 +9,5 @@ public class SingleShoppingRequestDto
     public DateTime DateTimeCreated { get; set; }
     public string Status { get; set; }
     public int UserId { get; set; }
+    public int? BringerId { get; set; }
 }

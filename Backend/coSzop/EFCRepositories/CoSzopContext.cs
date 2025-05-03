@@ -17,5 +17,10 @@ public class CoSzopContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+        builder.Entity<User>()
+            .HasMany(u => u.AcceptedRequests)
+            .WithOne(r => r.Bringer)
+            .HasForeignKey(r => r.BringerId)
+            .IsRequired(false);
     }
 }

@@ -11,4 +11,7 @@ public class ShoppingRequest
     
     public int UserId { get; set; }
     public User User { get; set; } = null!;
+    
+    public int? BringerId { get; set; }
+    public User? Bringer { get; set; }
 }

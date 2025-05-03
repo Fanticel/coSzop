@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using DTOs;
 using DTOs.ShoppingRequest;
 using Entities;
@@ -36,6 +37,8 @@ public class ShoppingRequestController : ControllerBase
                 Items = dto.Items,
                 MaximumPrice = dto.MaximumPrice,
                 Status = dto.Status,
+                UserId = owner.Id,
+                BringerId = null
             };
             var addedRequest = await shoppingRequestRepository.AddAsync(requestToAdd);
             owner.ShoppingRequests.Add(addedRequest);
@@ -47,7 +50,8 @@ public class ShoppingRequestController : ControllerBase
                 Items = addedRequest.Items,
                 MaximumPrice = addedRequest.MaximumPrice,
                 Status = addedRequest.Status,
-                UserId = owner.Id
+                UserId = owner.Id,
+                BringerId = addedRequest.BringerId
             });
         }
         catch (ArgumentException e)
@@ -75,7 +79,8 @@ public class ShoppingRequestController : ControllerBase
                 Items = retreivedRequest.Items,
                 MaximumPrice = retreivedRequest.MaximumPrice,
                 Status = retreivedRequest.Status,
-                UserId = retreivedRequest.UserId
+                UserId = retreivedRequest.UserId,
+                BringerId = retreivedRequest.BringerId
             });
         }
         catch (ArgumentException e)
@@ -106,7 +111,8 @@ public class ShoppingRequestController : ControllerBase
                     Items = req.Items,
                     MaximumPrice = req.MaximumPrice,
                     Status = req.Status,
-                    UserId = req.UserId
+                    UserId = req.UserId,
+                    BringerId = req.BringerId
                 });
             });
             var dto = new MultipleShoppingRequestsDto()
@@ -123,13 +129,13 @@ public class ShoppingRequestController : ControllerBase
     }
     
     [Authorize]
-    [HttpGet("limited")]
-    public async Task<ActionResult<MultipleShoppingRequestsDto>> GetManyRequestsWithinRange([FromBody] LimitedRequestDto dto)
+    [HttpGet("limited/range/{range:int}/from/{userId:int}")]
+    public async Task<ActionResult<MultipleShoppingRequestsDto>> GetManyRequestsWithinRange([FromRoute] int range, [FromRoute] int userId)
     {
         try
         {
-            User origin = await userRepository.GetSingleAsync(dto.UserId);
-            List<ShoppingRequest> retreivedRequests = shoppingRequestRepository.GetAllWithinDistance(dto.MaxDistance, origin).ToList();
+            User origin = await userRepository.GetSingleAsync(userId);
+            List<ShoppingRequest> retreivedRequests = shoppingRequestRepository.GetAllWithinDistance(range, origin).ToList();
             List<SingleShoppingRequestDto> requests = new List<SingleShoppingRequestDto>();
             retreivedRequests.ForEach(req =>
             {
@@ -141,8 +147,123 @@ public class ShoppingRequestController : ControllerBase
                     Items = req.Items,
                     MaximumPrice = req.MaximumPrice,
                     Status = req.Status,
-                    UserId = req.UserId
+                    UserId = req.UserId,
+                    BringerId = req.BringerId
                 });
+            });
+            var outputDto = new MultipleShoppingRequestsDto()
+            {
+                Count = retreivedRequests.Count,
+                ShoppingRequests = requests
+            };
+            return Ok(outputDto);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpGet("limited/status/{status}")]
+    public async Task<ActionResult<MultipleShoppingRequestsDto>> GetManyRequestsWithStatus([FromRoute] string status)
+    {
+        try
+        {
+            List<ShoppingRequest> retreivedRequests = shoppingRequestRepository.GetMany().ToList();
+            List<SingleShoppingRequestDto> requests = new List<SingleShoppingRequestDto>();
+            retreivedRequests.ForEach(req =>
+            {
+                if (req.Status == status)
+                {
+                    requests.Add(new SingleShoppingRequestDto
+                    {
+                        Id = req.Id,
+                        DateTimeCreated = req.DateTimeCreated,
+                        Description = req.Description,
+                        Items = req.Items,
+                        MaximumPrice = req.MaximumPrice,
+                        Status = req.Status,
+                        UserId = req.UserId,
+                        BringerId = req.BringerId
+                    });
+                }
+            });
+            var outputDto = new MultipleShoppingRequestsDto()
+            {
+                Count = retreivedRequests.Count,
+                ShoppingRequests = requests
+            };
+            return Ok(outputDto);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpGet("limited/user/{userId:int}")]
+    public async Task<ActionResult<MultipleShoppingRequestsDto>> GetManyRequestsByUser([FromRoute] int userId)
+    {
+        try
+        {
+            List<ShoppingRequest> retreivedRequests = shoppingRequestRepository.GetMany().ToList();
+            List<SingleShoppingRequestDto> requests = new List<SingleShoppingRequestDto>();
+            retreivedRequests.ForEach(req =>
+            {
+                if (req.UserId == userId)
+                {
+                    requests.Add(new SingleShoppingRequestDto
+                    {
+                        Id = req.Id,
+                        DateTimeCreated = req.DateTimeCreated,
+                        Description = req.Description,
+                        Items = req.Items,
+                        MaximumPrice = req.MaximumPrice,
+                        Status = req.Status,
+                        UserId = req.UserId,
+                        BringerId = req.BringerId
+                    });
+                }
+            });
+            var outputDto = new MultipleShoppingRequestsDto()
+            {
+                Count = retreivedRequests.Count,
+                ShoppingRequests = requests
+            };
+            return Ok(outputDto);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpGet("limited/bringer/{userId:int}")]
+    public async Task<ActionResult<MultipleShoppingRequestsDto>> GetManyRequestsByBringer([FromRoute] int userId)
+    {
+        try
+        {
+            List<ShoppingRequest> retreivedRequests = shoppingRequestRepository.GetMany().ToList();
+            List<SingleShoppingRequestDto> requests = new List<SingleShoppingRequestDto>();
+            retreivedRequests.ForEach(req =>
+            {
+                if (req.BringerId == userId)
+                {
+                    requests.Add(new SingleShoppingRequestDto
+                    {
+                        Id = req.Id,
+                        DateTimeCreated = req.DateTimeCreated,
+                        Description = req.Description,
+                        Items = req.Items,
+                        MaximumPrice = req.MaximumPrice,
+                        Status = req.Status,
+                        UserId = req.UserId,
+                        BringerId = req.BringerId
+                    });
+                }
             });
             var outputDto = new MultipleShoppingRequestsDto()
             {
@@ -163,16 +284,16 @@ public class ShoppingRequestController : ControllerBase
     {
         try
         {
-            var existing = await shoppingRequestRepository.GetSingleAsync(dto.Id);
             ShoppingRequest shoppingRequest = new ShoppingRequest
             {
                 Id = dto.Id,
-                DateTimeCreated = existing.DateTimeCreated,
+                DateTimeCreated = DateTime.UtcNow,
                 Description = dto.Description,
                 Items = dto.Items,
                 MaximumPrice = dto.MaximumPrice,
                 Status = dto.Status,
-                UserId = existing.UserId
+                UserId = dto.UserId,
+                BringerId = dto.BringerId
             };
 
             await shoppingRequestRepository.UpdateAsync(shoppingRequest);
@@ -185,7 +306,8 @@ public class ShoppingRequestController : ControllerBase
                 Items = updatedRequest.Items,
                 MaximumPrice = updatedRequest.MaximumPrice,
                 Status = updatedRequest.Status,
-                UserId = updatedRequest.UserId
+                UserId = updatedRequest.UserId,
+                BringerId = updatedRequest.BringerId
             };
             return Ok(updatedRequestDto);
         }
@@ -206,7 +328,7 @@ public class ShoppingRequestController : ControllerBase
         try
         {
             var requestToDelete = await shoppingRequestRepository.GetSingleAsync(id);
-            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)!.Value;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             if (int.TryParse(userIdClaim, out int userId) && userId == requestToDelete.UserId)
             {
