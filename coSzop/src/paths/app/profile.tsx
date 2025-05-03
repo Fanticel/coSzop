@@ -1,6 +1,5 @@
-import React from 'react';
-import { Path, useNavigate } from 'react-router';
-import { useState, useEffect, useContext } from "react";
+import { useNavigate } from 'react-router';
+import { useContext } from "react";
 import { paths } from '../../config/path';
 import { AuthContext } from '../authcontext';
 
