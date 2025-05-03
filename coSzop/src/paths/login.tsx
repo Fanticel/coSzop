@@ -1,7 +1,7 @@
-import { Path, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useState, useEffect, useContext } from "react";
 import { paths } from '../config/path';
-import { AuthContext, User } from './authcontext';
+import { AuthContext } from './authcontext';
 
 
 
@@ -13,7 +13,6 @@ const LoginRoute = () => {
     const navigate = useNavigate();
 
     const handlNav = (id: number) => {
-    // to navigate, uncomment the navigate and provide a path defined in config/path.ts
         switch(id){
         case 1:
             navigate(paths.home.getHref());

@@ -11,7 +11,6 @@ interface Props {
 function PrivateRoute({ children }: Props) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log(user);
 
   if (user == null) {
     navigate(paths.login.getHref())

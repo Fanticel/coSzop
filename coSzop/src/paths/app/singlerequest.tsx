@@ -48,8 +48,6 @@ function RequestDetails() {
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     };
-    console.log('https://coszop.electimore.xyz/api/shopping-request',
-      {id: request!.id, items: request!.items, description:request!.description, maximumPrice:newCost, status:'accepted', userId: request!.userId, bringerId: user!.id}, config)
     await axios.put('https://coszop.electimore.xyz/api/shopping-request',
       {id: request!.id, items: request!.items, description:request!.description, maximumPrice:newCost, status:'accepted', userId: request!.userId, bringerId: user!.id}, config)
     request!.status = 'accepted'
@@ -121,8 +119,7 @@ function RequestDetails() {
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     };
-    var res = await axios.delete(`https://coszop.electimore.xyz/api/shopping-request/${request.id}`, config)
-    console.log(res);
+    await axios.delete(`https://coszop.electimore.xyz/api/shopping-request/${request.id}`, config)
     handleReturn(2);
   }
 

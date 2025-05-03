@@ -1,18 +1,11 @@
-import { Path, useNavigate } from 'react-router';
-import { useState, useEffect, useContext } from "react";
+import { useNavigate } from 'react-router';
+import { useContext } from "react";
 import { paths } from '../config/path';
 import { AuthContext } from './authcontext';
 // import { Modal } from '@/components/private/modal';
 
-type EntryProps = {
-  name? : string,
-  url? : string
-}
-
-
-
 const LandingRoute = () => {
-  const {user, logout} = useContext(AuthContext)
+  const {user} = useContext(AuthContext)
   const navigate = useNavigate();
 
   const handlNav = (id: number) => {
@@ -31,9 +24,6 @@ const LandingRoute = () => {
         navigate(paths.app.requests.getHref());
     }
   };
-  const handleLogout = () => {
-    logout();
-  }
   return (
     user==null?
     <>
@@ -42,7 +32,7 @@ const LandingRoute = () => {
           <h4 className='text-black font-bold text-3xl lg:text-6xl p-2'>Hi!</h4>
           <p className='text-black font-bold text-xl lg:text-3xl p-1'>Welcome to coSzop, a place where other people remember what you forgot!</p>
           <div className='flex'>
-            <p className='text-black font-bold text-xl lg:text-3xl p-1'>In orderd to use the service please, </p>
+            <p className='text-black font-bold text-xl lg:text-3xl p-1'>In order to use the service please, </p>
             <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' onClick={()=>{handlNav(2)}}>Log in</button>
           </div>
         </div>

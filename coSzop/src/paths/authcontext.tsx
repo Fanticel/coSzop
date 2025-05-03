@@ -81,7 +81,6 @@ export const AuthProvider = ({ children } : Props) => {
     var res;
     try{
        res = await axios.post("https://coszop.electimore.xyz/api/auth/register", {phoneNumber, email, password, nickname, address});
-       console.log(res);
     }catch(error){
       throw new Error("Something went wrong")
     }

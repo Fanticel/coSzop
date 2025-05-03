@@ -33,10 +33,7 @@ function CreateRequest() {
       status:"pending",
       description,
     };
-    console.log('https://coszop.electimore.xyz/api/shopping-request', newRequest, config)
-    let res = await axios.post('https://coszop.electimore.xyz/api/shopping-request', newRequest, config)
-    console.log(res)
-//do something here?
+    await axios.post('https://coszop.electimore.xyz/api/shopping-request', newRequest, config)
     navigate(paths.app.requests.getHref());
   };
 
