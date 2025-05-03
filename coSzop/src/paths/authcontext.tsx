@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
+import {jwtDecode} from 'jwt-decode'
 import axios from 'axios';
 
 type Props = {
@@ -9,13 +10,34 @@ type AuthServices = {
     user: User | null,
     login: (email:string, password:string)=>void,
     logout: ()=>void
-    register: (phoneNumber:number, nickname:string, email:string, password:string, address:string)=>void
+    register: (phoneNumber:string, nickname:string, email:string, password:string, address:Address)=>void
+}
+
+type Token = {
+  sub: number,
+  email:string,
+  phone_number:string,
+  nickname:string
+}
+
+type Address = {
+  address:string
+  latitude:number,
+  longitude:number
 }
 
 export type User = {
     nickname: string,
     email: string,
     id: number
+    address: Address
+    phone_number:string
+}
+
+export type MiniUser = {
+  id: number,
+  nickname: string,
+  phone_number:string
 }
 
 export const AuthContext = createContext<AuthServices>({
@@ -25,14 +47,29 @@ export const AuthContext = createContext<AuthServices>({
     register: ()=>{}
 });
 
+export async function GetFullUser<User>(id:number){
+  let token = localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+  if (token==null)return;
+  const res = await axios.get('https://coszop.electimore.xyz/api/user/full/'+id, config)
+  return res.data;
+}
+
+export async function GetMiniUser<MiniUser>(id:number){
+  const res = await axios.get('https://coszop.electimore.xyz/api/user/3'+id)
+  return res.data;
+}
+
 export const AuthProvider = ({ children } : Props) => {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email : string, password : string) => {
-    console.log("imagine a login with a " + email + ", " + password)
-    // const res = await axios.post('https://coszop.electimore.xyz/api/auth/login', { email, password });
-    // localStorage.setItem('token', res.data.token);
-    // setUser(res.data.user);
+    const res = await axios.post('https://coszop.electimore.xyz/api/auth/login', { email, password });
+    localStorage.setItem('token', res.data);
+    let userTemp:Token = jwtDecode(res.data)
+    setUser(await GetFullUser(userTemp.sub));
   };
 
   const logout = () => {
@@ -40,20 +77,29 @@ export const AuthProvider = ({ children } : Props) => {
     setUser(null);
   };
 
-  const register = async (phoneNumber:number, nickname:string, email:string, password:string, address:string) => {
-    console.log("imagine a register with"+phoneNumber+nickname+email+password+address);
-    // const res = await axios.post("", {phoneNumber, nickname, email, password});
-    // localStorage.setItem('token', res.data.token);
-    // setUser(res.data.user);
+  const register = async (phoneNumber:string, nickname:string, email:string, password:string, address:Address) => {
+    var res;
+    try{
+       res = await axios.post("https://coszop.electimore.xyz/api/auth/register", {phoneNumber, email, password, nickname, address});
+       console.log(res);
+    }catch(error){
+      throw new Error("Something went wrong")
+    }
+    localStorage.setItem('token', res.data);
+    let userTemp:Token = jwtDecode(res.data)
+    setUser(await GetFullUser(userTemp.sub))
   }
 
   // Check if user is logged in on app load
   useEffect(() => {
+    async function localGet(token:Token){
+      let data = await GetFullUser(token.sub);
+      setUser(data)
+    }
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('https://coszop.electimore.xyz/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(res => setUser(res.data));
+      let userTemp:Token = jwtDecode(token)
+      localGet(userTemp)
     }
   }, []);
 

@@ -4,7 +4,7 @@ import { paths } from '../../config/path';
 import { AuthContext } from '../authcontext';
 import axios from 'axios';
 
-function requests(){
+function myRequests(){
   const {user} = useContext(AuthContext)
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,6 @@ function requests(){
     items: string;
     maximumPrice: number;
     userId: number;
-    bringerId: number;
     status: 'pending' | 'accepted' | 'completed';
   }
 
@@ -25,11 +24,10 @@ function requests(){
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     };
-    // var res = await axios.get('https://coszop.electimore.xyz/api/shopping-request', config)
-    var res = await axios.get(`https://coszop.electimore.xyz/api/shopping-request/limited/range/100/from/${user.id}`, config)
+    var res = await axios.get(`https://coszop.electimore.xyz/api/shopping-request/limited/user/${user.id}`, config)
     const ans = new Array<Request>
     res.data.shoppingRequests.forEach((req:Request) => {
-      if((req.status==='pending' && req.userId!=user.id) || req.bringerId == user.id){ans.push(req)}
+      if(req.status==='accepted'){ans.push(req)}
     });
     setRequests(ans)
   }
@@ -58,7 +56,7 @@ function requests(){
   return(
     <>
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4 text-gray-800">Requests</h1>
+      <h1 className="text-2xl font-semibold mb-4 text-gray-800">Your requests accepted by others</h1>
       <div className="mb-4">
       </div>
       {requests.length === 0 ? (
@@ -69,8 +67,7 @@ function requests(){
             <li
             key={request.id}
             onClick={() => handleNav(request.id.toString())}
-            className={request.status==="accepted"?"px-6 py-4 border-b last:border-b-0 cursor-pointer hover:bg-green-50 transition duration-150 ease-in-out bg-yellow-200"
-              :"px-6 py-4 border-b last:border-b-0 cursor-pointer hover:bg-green-50 transition duration-150 ease-in-out "}
+            className="px-6 py-4 border-b last:border-b-0 cursor-pointer hover:bg-green-50 transition duration-150 ease-in-out"
           >
             <p className="text-lg font-medium text-gray-700">{request.items}</p>
             <p className="text-sm text-gray-500">{"max: " + request.maximumPrice + "DKK"}</p>
@@ -83,4 +80,4 @@ function requests(){
   );
 }
 
-export default requests;
+export default myRequests;

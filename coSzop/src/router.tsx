@@ -35,31 +35,33 @@ export const createAppRouter = (queryClient: QueryClient) =>
         {
             path: paths.app.requests.path,
             lazy: () => import('./paths/app/requests').then(convert(queryClient)),
-        }
-        // {
-        //   path: paths.app.about.path,
-        //   lazy: () => import('./routes/app/about').then(convert(queryClient)),
-        // },
-        // {
-        //   path: paths.app.discussion.path,
-        //   lazy: () =>
-        //     import('./routes/app/discussions/discussion').then(
-        //       convert(queryClient),
-        //     ),
-        // },
-        // {
-        //   path: paths.app.users.path,
-        //   lazy: () => import('./routes/app/users').then(convert(queryClient)),
-        // },
-        // {
-        //   path: paths.app.profile.path,
-        //   lazy: () => import('./routes/app/profile').then(convert(queryClient)),
-        // },
-        // {
-        //   path: paths.app.dashboard.path,
-        //   lazy: () =>
-        //     import('./routes/app/dashboard').then(convert(queryClient)),
-        // },
+            // children: [
+            //   {
+            //     path: paths.app.requests.request.path, 
+            //     lazy: () => import('./paths/app/singlerequest').then(convert(queryClient)), 
+            //   },
+            // ],
+        },
+        {
+          path: paths.app.request.path,
+          lazy: () => import('./paths/app/singlerequest').then(convert(queryClient)),
+        },
+        {
+          path: paths.app.createrequest.path,
+          lazy: () => import('./paths/app/createrequest').then(convert(queryClient)),
+        },
+        {
+          path: paths.app.profile.path,
+          lazy: () => import('./paths/app/profile').then(convert(queryClient)),
+        },
+        {
+          path: paths.app.editprofile.path,
+          lazy: () => import('./paths/app/editprofile').then(convert(queryClient)),
+        },
+        {
+          path: paths.app.myRequests.path,
+          lazy: () => import('./paths/app/myRequests').then(convert(queryClient))
+        },
       ],
     },
     {
