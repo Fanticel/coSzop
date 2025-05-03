@@ -11,7 +11,7 @@ public class TokenProvider(IConfiguration configuration)
 {
     public string Create(User user)
     {
-        string secretKey = configuration["JwtSettings:Secret"];
+        string secretKey = configuration["JwtSettings:Secret"]!;
         if (string.IsNullOrWhiteSpace(secretKey))
         {
             throw new InvalidOperationException("JWT secret is not configured. Check environmental variables.");

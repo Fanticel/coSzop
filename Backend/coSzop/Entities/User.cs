@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Entities;
+﻿namespace Entities;
 
 public class User
 {
@@ -13,6 +11,4 @@ public class User
     public UserAddress Address { get; set; }
     public ICollection<ShoppingRequest> ShoppingRequests { get; } = new List<ShoppingRequest>();
     public ICollection<ShoppingRequest> AcceptedRequests { get; } = new List<ShoppingRequest>();
-
-    public User(){}
 }

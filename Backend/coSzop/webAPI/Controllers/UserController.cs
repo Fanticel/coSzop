@@ -11,11 +11,11 @@ namespace WebApplication1.Controllers;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly IUserRepository userRepository;
+    private readonly IUserRepository _userRepository;
 
     public UserController(IUserRepository userRepository)
     {
-        this.userRepository = userRepository;
+        _userRepository = userRepository;
     }
 
     [Authorize]
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
                 }
             };
 
-            var addedUser = await userRepository.AddAsync(userToAdd);
+            var addedUser = await _userRepository.AddAsync(userToAdd);
             var addedUserDto = new SingleUserFullDto
             {
                 Id = addedUser.Id,
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var retrievedUser = await userRepository.GetSingleAsync(id);
+            var retrievedUser = await _userRepository.GetSingleAsync(id);
             return new SingleUserPublicDto
             {
                 Id = retrievedUser.Id,
@@ -75,7 +75,7 @@ public class UserController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return NotFound("User with the specified Id does not exist");
+            return NotFound(e.Message);
         }
         catch (Exception e)
         {
@@ -89,7 +89,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var retrievedUser = await userRepository.GetSingleAsync(id);
+            var retrievedUser = await _userRepository.GetSingleAsync(id);
             return new SingleUserFullDto
             {
                 Id = retrievedUser.Id,
@@ -106,7 +106,7 @@ public class UserController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return NotFound("User with the specified Id does not exist");
+            return NotFound(e.Message);
         }
         catch (Exception e)
         {
@@ -115,11 +115,11 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<MultipleUsersDto>> GetManyUsers()
+    public ActionResult<MultipleUsersDto> GetManyUsers()
     {
         try
         {
-            List<User> retreivedUsers = userRepository.GetMany().ToList();
+            List<User> retreivedUsers = _userRepository.GetMany().ToList();
             List<SingleUserPublicDto> users = new List<SingleUserPublicDto>();
             retreivedUsers.ForEach(user =>
             {
@@ -178,8 +178,8 @@ public class UserController : ControllerBase
                     Latiture = dto.Address.Latitude
                 }
             };
-            await userRepository.UpdateAsync(user);
-            User updatedUser = await userRepository.GetSingleAsync(user.Id);
+            await _userRepository.UpdateAsync(user);
+            User updatedUser = await _userRepository.GetSingleAsync(user.Id);
             var updatedUserDto = new SingleUserFullDto
             {
                 Id = updatedUser.Id,
@@ -211,10 +211,10 @@ public class UserController : ControllerBase
     {
         try
         {
-            var userToDelete = await userRepository.GetSingleByEmailAsync(dto.Email);
+            var userToDelete = await _userRepository.GetSingleByEmailAsync(dto.Email);
             if (PasswordHandler.Validate(userToDelete.Password, dto.Password))
             {
-                await userRepository.DeteleAsync(userToDelete.Id);
+                await _userRepository.DeleteAsync(userToDelete.Id);
                 return Ok("Account deleted successfully");
             }
 

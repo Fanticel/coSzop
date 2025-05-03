@@ -10,6 +10,4 @@ public class UserAddress
     
     public int UserId { get; set; }
     public User AddressUser { get; set; } = null!;
-    
-    public UserAddress(){}
 }

@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using DTOs;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +10,13 @@ namespace WebApplication1.Controllers;
 [Route("api/auth")]
 public class AuthController: ControllerBase
 {
-    private readonly TokenProvider tokenProvider;
-    private readonly IUserRepository userRepository;
+    private readonly TokenProvider _tokenProvider;
+    private readonly IUserRepository _userRepository;
     
     public AuthController(IUserRepository userRepository, TokenProvider tokenProvider)
     {
-        this.userRepository = userRepository;
-        this.tokenProvider = tokenProvider;
+        _userRepository = userRepository;
+        _tokenProvider = tokenProvider;
     }
     
     [HttpPost("login")]
@@ -25,10 +24,10 @@ public class AuthController: ControllerBase
     {
         try
         {
-            var userTryingToLogIn = await userRepository.GetSingleByEmailAsync(dto.Email);
+            var userTryingToLogIn = await _userRepository.GetSingleByEmailAsync(dto.Email);
             if (PasswordHandler.Validate(userTryingToLogIn.Password, dto.Password))
             {
-                return tokenProvider.Create(userTryingToLogIn);
+                return _tokenProvider.Create(userTryingToLogIn);
             }
 
             return Unauthorized("The password was incorrect");
@@ -62,8 +61,8 @@ public class AuthController: ControllerBase
                 }
             };
 
-            var addedUser = await userRepository.AddAsync(userToAdd);
-            return Ok(tokenProvider.Create(addedUser));
+            var addedUser = await _userRepository.AddAsync(userToAdd);
+            return Ok(_tokenProvider.Create(addedUser));
         }
         catch (Exception e)
         {
