@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { paths } from '../../config/path';
-import { AuthContext, User } from '../authcontext';
+import { AuthContext } from '../authcontext';
 
 const EditProfile = () => {
     const { user, register } = useContext(AuthContext); {/* change register to update */}

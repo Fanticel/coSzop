@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { paths } from '../../config/path';
 import { useNavigate } from 'react-router-dom';
@@ -24,8 +24,8 @@ function RequestDetails() {
   const [requestingPerson, setRequestingPerson] = useState<User | null>(null);
   const [request, setRequest] = useState<Request | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [miniError, setMiniError] = useState<string | null>(null);
+  const [error] = useState(null);
+  const [miniError, setMiniError] = useState<string | null>("");
   const [newCost, setNewCost] =useState(0);
   const navigate = useNavigate();
 
@@ -33,22 +33,28 @@ function RequestDetails() {
     let data = await GetFullUser(foundRequest.userId)
     setRequestingPerson(data);
   }
-
-  const updateRequest = async() => {
-    if (request==null || user==null){return;}
+  function preChecks(){
+    if (request==null || user==null){
+      setMiniError("Something went wrong");
+      return false;}
     if (newCost > request.maximumPrice){
       setMiniError("You cannot go over the maxium price");
-      return;
+      return false;
     }
+    return true
+  }
+  const updateRequest = async() => {
+    if (!preChecks()) {return;}
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     };
     console.log('https://coszop.electimore.xyz/api/shopping-request',
-      {id: request.id, items: request.items, description:request.description, maximumPrice:newCost, status:'accepted', userId: request.userId, bringerId: user.id}, config)
-    var res = await axios.put('https://coszop.electimore.xyz/api/shopping-request',
-      {id: request.id, items: request.items, description:request.description, maximumPrice:newCost, status:'accepted', userId: request.userId, bringerId: user.id}, config)
-    request.status = 'accepted'
-  }
+      {id: request!.id, items: request!.items, description:request!.description, maximumPrice:newCost, status:'accepted', userId: request!.userId, bringerId: user!.id}, config)
+    await axios.put('https://coszop.electimore.xyz/api/shopping-request',
+      {id: request!.id, items: request!.items, description:request!.description, maximumPrice:newCost, status:'accepted', userId: request!.userId, bringerId: user!.id}, config)
+    request!.status = 'accepted'
+    
+  } 
 
   useEffect(() => {
     if (!requestId) {
@@ -95,13 +101,19 @@ function RequestDetails() {
     return <p className="text-gray-500">No requesting person found</p>;
   }
 
-  const handleReturn = () => {
-    navigate(paths.app.requests.getHref());
+  const handleReturn = (id:number) => {
+    switch (id){
+      case 1:
+        navigate(paths.app.requests.getHref());
+        break;
+      case 2:
+        navigate(paths.app.myRequests.getHref())
+    }
   };
 
   const handleAccept = () => {
     updateRequest();
-    if (miniError!=null){handleReturn();}
+    if (preChecks()){handleReturn(1);}
   };
 
   const handleDeleting = async() => {
@@ -111,7 +123,7 @@ function RequestDetails() {
     };
     var res = await axios.delete(`https://coszop.electimore.xyz/api/shopping-request/${request.id}`, config)
     console.log(res);
-    handleReturn();
+    handleReturn(2);
   }
 
   return (
@@ -161,7 +173,7 @@ function RequestDetails() {
         <div className="flex justify-center space-x-2 mt-10">
           <button
             type="button"
-            onClick={handleReturn}
+            onClick={()=>{handleReturn(1)}}
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Return
@@ -170,7 +182,7 @@ function RequestDetails() {
             <>
             <button
               type="button"
-              onClick={handleAccept}
+              onClick={()=>{handleAccept()}}
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Accept Request
@@ -180,7 +192,7 @@ function RequestDetails() {
           {(request.status === 'accepted' && user!=null && request.bringerId != user?.id) && (
             <button
               type="button"
-              onClick={handleDeleting}
+              onClick={()=>{handleDeleting()}}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Mark as Completed, and remove

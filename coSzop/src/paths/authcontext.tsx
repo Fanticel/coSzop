@@ -47,7 +47,7 @@ export const AuthContext = createContext<AuthServices>({
     register: ()=>{}
 });
 
-export async function GetFullUser<User>(id:number){
+export async function GetFullUser(id:number){
   let token = localStorage.getItem('token');
   const config = {
     headers: { Authorization: `Bearer ${token}` }
@@ -57,7 +57,7 @@ export async function GetFullUser<User>(id:number){
   return res.data;
 }
 
-export async function GetMiniUser<MiniUser>(id:number){
+export async function GetMiniUser(id:number){
   const res = await axios.get('https://coszop.electimore.xyz/api/user/3'+id)
   return res.data;
 }

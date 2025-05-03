@@ -1,8 +1,6 @@
 import React, { useContext, useState } from 'react';
 import './Navbar.css'; 
 import { AuthContext } from '../../../paths/authcontext';
-import { Link } from "react-router-dom";
-import { paths } from '../../../config/path';
 
 
 interface NavbarProps {

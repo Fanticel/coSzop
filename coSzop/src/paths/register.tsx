@@ -1,4 +1,4 @@
-import { Path, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useState, useEffect, useContext } from "react";
 import { paths } from '../config/path';
 import { AuthContext } from './authcontext';
@@ -17,7 +17,6 @@ const RegisterRoute = () => {
     const [nickname, setNickname] = useState<string>("")
     const [error, setError] = useState<string>("")
     const [address, setAddress] = useState<string>("")
-    let map:google.maps.Map | null = null
     const {user , register} = useContext(AuthContext)
     const navigate = useNavigate();
     const myLatlng = { lat: 55.854, lng: 9.850 };
@@ -50,7 +49,7 @@ const RegisterRoute = () => {
         }
       };
 
-    function handleAllTheDamnChecks<bool>(){
+    function handleAllTheDamnChecks(){
       if (email==""){
         setError("You need to provide an email address");
         return false;
