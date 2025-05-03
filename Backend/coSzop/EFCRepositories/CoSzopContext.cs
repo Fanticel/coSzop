@@ -7,6 +7,7 @@ public class CoSzopContext : DbContext
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<UserAddress> UserAddresses => Set<UserAddress>();
+    public DbSet<ShoppingRequest> ShoppingRequests => Set<ShoppingRequest>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -11,7 +11,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+var myAllowSpecificOrigins = "allowOtherDevelopers";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins(
+                    "https://frontend-coszop.electimore.xyz",
+                    "http://localhost:5173")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
+
 builder.Services.AddScoped<IUserRepository, EfcUserRepository>();
+builder.Services.AddScoped<IShoppingRequestRepository, EfcShoppingRequestRepository>();
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddDbContext<EFCRepositories.CoSzopContext>();
 
@@ -29,19 +46,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
         
-        o.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine("AUTH FAIL: " + context.Exception.Message);
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                Console.WriteLine("AUTH SUCCESS: " + context.SecurityToken);
-                return Task.CompletedTask;
-            }
-        };
+        // o.Events = new JwtBearerEvents
+        // {
+        //     OnAuthenticationFailed = context =>
+        //     {
+        //         Console.WriteLine("AUTH FAIL: " + context.Exception.Message);
+        //         return Task.CompletedTask;
+        //     },
+        //     OnTokenValidated = context =>
+        //     {
+        //         Console.WriteLine("AUTH SUCCESS: " + context.SecurityToken);
+        //         return Task.CompletedTask;
+        //     }
+        // };
     });
 builder.Services.AddAuthorization();
 
@@ -91,6 +108,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

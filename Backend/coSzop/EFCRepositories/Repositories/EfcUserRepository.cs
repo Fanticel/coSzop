@@ -46,7 +46,7 @@ public class EfcUserRepository : IUserRepository
 
     public async Task<User> GetSingleAsync(int id)
     {
-        User? existing = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
+        User? existing = await ctx.Users.Include(u => u.Address).SingleOrDefaultAsync(u => u.Id == id);
         if (existing == null)
         {
             throw new ArgumentException($"Could not find the user with id: {id}");
@@ -57,7 +57,7 @@ public class EfcUserRepository : IUserRepository
 
     public async Task<User> GetSingleByEmailAsync(string email)
     {
-        User? existing = await ctx.Users.SingleOrDefaultAsync(u => u.Email == email);
+        User? existing = await ctx.Users.Include(u => u.Address).SingleOrDefaultAsync(u => u.Email == email);
         if (existing == null)
         {
             throw new ArgumentException($"Could not find the user with the email: {email}");

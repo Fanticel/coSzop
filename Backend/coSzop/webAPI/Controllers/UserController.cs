@@ -145,7 +145,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<SingleUserFullDto>> UpdateSingleUser([FromRoute] UpdateUserDto dto)
+    public async Task<ActionResult<SingleUserFullDto>> UpdateSingleUser([FromBody] UpdateUserDto dto)
     {
         if(dto.Nickname.Equals(""))
         {

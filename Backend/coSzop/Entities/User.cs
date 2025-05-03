@@ -9,7 +9,9 @@ public class User
     public string Password { get; set; }
     public string PhoneNumber { get; set; }
     public string Nickname { get; set; }
-    public UserAddress? Address { get; set; }
+    
+    public UserAddress Address { get; set; }
+    public ICollection<ShoppingRequest> ShoppingRequests { get; } = new List<ShoppingRequest>();
 
     public User(){}
 }
