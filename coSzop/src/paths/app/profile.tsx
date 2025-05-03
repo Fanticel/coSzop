@@ -6,7 +6,7 @@ import { AuthContext } from '../authcontext';
 const UserProfile = () =>{
   const {user} = useContext(AuthContext)
   const navigate = useNavigate();
-
+  console.log(user);
   const handleNav = () => {
             navigate(paths.app.editprofile.getHref());
       };
@@ -29,7 +29,7 @@ const UserProfile = () =>{
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Phone number:</label>
-          <p className="text-gray-800">{user.phone_number}</p>
+          <p className="text-gray-800">{user.phoneNumber}</p>
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">Address:</label>

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { paths } from '../../config/path';
 import { useNavigate } from 'react-router-dom';
 import { GetFullUser, User, AuthContext } from '../authcontext';
+import {AdvancedMarker, APIProvider, Map} from '@vis.gl/react-google-maps';
 import axios from 'axios';
 
 
@@ -21,6 +22,7 @@ interface Request {
 function RequestDetails() {
   const {user} = useContext(AuthContext);
   const { requestId } = useParams<{ requestId: string }>();
+  const [zoom, setZoom] = useState<number>(17);
   const [requestingPerson, setRequestingPerson] = useState<User | null>(null);
   const [request, setRequest] = useState<Request | null>(null);
   const [loading, setLoading] = useState(true);
@@ -153,6 +155,29 @@ function RequestDetails() {
             Status: {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
           </p>
         )}
+        <APIProvider apiKey={import.meta.env.VITE_GOOGLE_API}>
+                  <Map
+                    style={{width: '100%', height: '300px'}}
+                    defaultCenter={user!=null?{lat:user!.address.latitude, lng:user!.address.longitude}:{lat: 55.854, lng: 9.850}}
+                    defaultZoom={zoom}
+                    onZoomChanged={(ev)=>{setZoom(ev.detail.zoom);}}
+                    gestureHandling={'greedy'}
+                    disableDefaultUI={true}
+                    mapId="MY_MAP">
+                      {requestingPerson!=null?<AdvancedMarker position={{lat:requestingPerson.address.latitude, lng:requestingPerson.address.longitude}}>
+                        {zoom<17?<div className='bg-yellow-20 bg-opacity-20 rounded-lg'><p className='text-lg'>🚀</p></div>
+                        :<div className='bg-green-200 rounded-lg h-15 w-15 bg-opacity-20 flex justify-center items-center'>
+                          <p className='font-bold'>🚀 Meeting around here!</p>
+                        </div>}
+                      </AdvancedMarker>:''}
+                      {user!=null?<AdvancedMarker position={{lat:user.address.latitude, lng:user.address.longitude}}>
+                      {zoom<17?<div className='bg-yellow-20 bg-opacity-20 rounded-lg'><p className='text-lg'>🏠</p></div>
+                      :<div className='bg-yellow-200 rounded-lg h-15 w-15 bg-opacity-20 flex justify-center items-center'>
+                      <p className='font-bold'>🏠 Your house here!</p>
+                        </div>}
+                      </AdvancedMarker>:''}
+                    </Map>
+                </APIProvider>
         {request.status === "pending"?<div className="flex justify-center space-x-2 mt-10">
         <label htmlFor="pricer" className="block text-gray-700 text-sm font-bold mb-2">
             Name your price:

@@ -26,7 +26,7 @@ function requests(){
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     };
     // var res = await axios.get('https://coszop.electimore.xyz/api/shopping-request', config)
-    var res = await axios.get(`https://coszop.electimore.xyz/api/shopping-request/limited/range/100/from/${user.id}`, config)
+    var res = await axios.get(`https://coszop.electimore.xyz/api/shopping-request/limited/range/250/from/${user.id}`, config)
     const ans = new Array<Request>
     res.data.shoppingRequests.forEach((req:Request) => {
       if((req.status==='pending' && req.userId!=user.id) || req.bringerId == user.id){ans.push(req)}

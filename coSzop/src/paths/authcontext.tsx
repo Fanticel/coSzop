@@ -31,7 +31,7 @@ export type User = {
     email: string,
     id: number
     address: Address
-    phone_number:string
+    phoneNumber:string
 }
 
 export type MiniUser = {

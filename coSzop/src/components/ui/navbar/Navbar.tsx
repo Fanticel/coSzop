@@ -26,11 +26,12 @@ const Navbar: React.FC<NavbarProps> = ({ links }) => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
+        <h2 className='text-white font-bold text-lg'>coSzop</h2>
         <button className="burger-menu" onClick={toggleMenu}>
           ☰
         </button>
       </div>
-      <div className='flex flex-row'>
+      <div className="navbar-row">
       <ul className={`navbar-links ${isOpen ? 'open' : ''}`}>
         {links.map((link, index) => (
           <li key={index}>
