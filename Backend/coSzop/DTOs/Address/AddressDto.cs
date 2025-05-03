@@ -2,5 +2,7 @@ namespace DTOs;
 
 public class AddressDto
 {
-    public String Address { get; set; }
+    public string Address { get; set; }
+    public float Longitude { get; set; }
+    public float Latitude { get; set; }
 }

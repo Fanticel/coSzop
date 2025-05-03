@@ -1,7 +1,9 @@
 using DTOs;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using WebApplication1.Auth;
 
 namespace WebApplication1.Controllers;
 
@@ -16,6 +18,7 @@ public class UserController : ControllerBase
         this.userRepository = userRepository;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<SingleUserFullDto>> AddUser([FromBody] RegisterUserDto user)
     {
@@ -29,7 +32,9 @@ public class UserController : ControllerBase
                 Nickname = user.Nickname,
                 Address = new UserAddress
                 {
-                    Address = user.Address.Address
+                    Address = user.Address.Address,
+                    Longitute = user.Address.Longitude,
+                    Latiture = user.Address.Latitude
                 }
             };
 
@@ -42,7 +47,9 @@ public class UserController : ControllerBase
                 PhoneNumber = addedUser.PhoneNumber,
                 Address = new AddressDto
                 {
-                    Address = addedUser.Address.Address
+                    Address = addedUser.Address.Address,
+                    Longitude = addedUser.Address.Longitute,
+                    Latitude = addedUser.Address.Latiture
                 }
             };
             return Ok(addedUserDto);
@@ -64,6 +71,37 @@ public class UserController : ControllerBase
                 Id = retrievedUser.Id,
                 Nickname = retrievedUser.Nickname,
                 PhoneNumber = retrievedUser.PhoneNumber
+            };
+        }
+        catch (ArgumentException e)
+        {
+            return NotFound("User with the specified Id does not exist");
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    [Authorize]
+    [HttpGet("full/{id:int}")]
+    public async Task<ActionResult<SingleUserFullDto>> GetSingleFullUserById([FromRoute] int id)
+    {
+        try
+        {
+            var retrievedUser = await userRepository.GetSingleAsync(id);
+            return new SingleUserFullDto
+            {
+                Id = retrievedUser.Id,
+                Email = retrievedUser.Email,
+                Nickname = retrievedUser.Nickname,
+                PhoneNumber = retrievedUser.PhoneNumber,
+                Address = new AddressDto
+                {
+                    Address = retrievedUser.Address.Address,
+                    Longitude = retrievedUser.Address.Longitute,
+                    Latitude = retrievedUser.Address.Latiture
+                }
             };
         }
         catch (ArgumentException e)
@@ -105,6 +143,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult<SingleUserFullDto>> UpdateSingleUser([FromRoute] UpdateUserDto dto)
     {
@@ -135,6 +174,8 @@ public class UserController : ControllerBase
                 Address = new UserAddress
                 {
                     Address = dto.Address.Address,
+                    Longitute = dto.Address.Longitude,
+                    Latiture = dto.Address.Latitude
                 }
             };
             await userRepository.UpdateAsync(user);
@@ -147,7 +188,9 @@ public class UserController : ControllerBase
                 PhoneNumber = updatedUser.PhoneNumber,
                 Address = new AddressDto
                 {
-                    Address = updatedUser.Address.Address
+                    Address = updatedUser.Address.Address,
+                    Longitude = updatedUser.Address.Longitute,
+                    Latitude = updatedUser.Address.Latiture
                 }
             };
             return Ok(updatedUserDto);
@@ -162,13 +205,14 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete]
     public async Task<ActionResult> DeleteSingleUser([FromBody] LoginUserDto dto)
     {
         try
         {
             var userToDelete = await userRepository.GetSingleByEmailAsync(dto.Email);
-            if (userToDelete.Password == dto.Password)
+            if (PasswordHandler.Validate(userToDelete.Password, dto.Password))
             {
                 await userRepository.DeteleAsync(userToDelete.Id);
                 return Ok("Account deleted successfully");

@@ -56,6 +56,12 @@ namespace EFCRepositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<float>("Latiture")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("Longitute")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
